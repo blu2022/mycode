@@ -2,3 +2,7 @@ lookup.tails.example.org
 search.drwiley.example.org
 dns.knuckles.example.org
 emerald.ring.example.org
+lookup.tails.example.org
+search.drwiley.example.org
+dns.knuckles.example.org
+emerald.ring.example.org
