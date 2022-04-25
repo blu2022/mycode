@@ -139,7 +139,9 @@ while True:
   #if they type 'get' first
   if move[0] == 'get' :
     #if the room contains an item, and the item is the one they want to get
-    if "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']:
+    if move[1] in inventory:
+      print(f"You already have a {move[1]}!")
+    elif 'item' in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']:
       #add the item to their inventory
       inventory += [move[1]]
       #display a helpful message
