@@ -13,8 +13,8 @@ def mac(adapter_name):
 def ip(adapter_name):
     print(f"IP: {netifaces.ifaddresses(adapter_name)[netifaces.AF_INET][0]['addr']}") # Prints the IP address
 
-adapter_name= input("Choose an adapter:\n>")
+choice= input("Choose an adapter:\n>")
 
-mac(adapter_name)
+mac(choice)
 
-ip(adapter_name)
+ip(choice)
