@@ -4,6 +4,7 @@ import os
 import random
 import time
 from pyfiglet import figlet_format
+import threading
 
 # search from here http://www.figlet.org/examples.html 
 def bannershow():
@@ -19,14 +20,14 @@ def print_slow(text, delay = 0.03):
         time.sleep(delay)
     print("\n")
 
-
 def print1(text1, delay = 0):
     print("\n" + text1)
     time.sleep(delay)
 
-def print2(text2, delay = 0.3):
-    print(text2)
-    time.sleep(delay)
+def restart():
+    sys.stdout.flush()
+    os.execl(sys.executable, 'python', __file__, *sys.argv[1:])
+
 
 def countdown(t):
     
@@ -40,10 +41,6 @@ def countdown(t):
     countdown(int(t))  
     print('You are eaten by zombie! GAME OVER!')
   
-  
-
-  
-
 
 delay = 0
 
@@ -60,15 +57,16 @@ hint: Water kills fire.
 Commands:
   go [direction]  ---- go to a direction
   get [item]      ---- obtain an item
+  drop [item]     ---- drop an item
   use [item]      ---- use an item
-  help            ---- review the instruction
+  h or help       ---- review the instruction (inventory check)
+  r or restart    ---- restart the game
   q or quit       ---- quit the game
 ''')
 
 def showStatus():
   print('---------------------------')
   print_slow('You are in the ' + currentRoom)
-  time.sleep(delay)
   print_slow('Inventory : ' + str(inventory))
   if "item" in rooms[currentRoom]:
     print_slow(f"You see {rooms[currentRoom]['item']}")
@@ -146,21 +144,29 @@ while True:
                 print1(rooms[currentRoom]['desc'], 1)
         else:
           print('You can\'t go that way!')        
-   
+
+  # add items to inventory
   if move[0] == 'get' :
-  # CHAD NOTE: I really like what you added to the "get" section, really clever!!! 
-  
     if move[1] in inventory:
       print(f"You already have a {move[1]}!")
-      
+    elif move[1] not in inventory and len(inventory) >= 3:
+      print('You can not pick up more than 3 items!') 
     elif 'item' in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']:
       inventory += [move[1]]
       print(move[1] + ' got!')
       rooms[currentRoom]['item'].remove(move[1])
-      
     else:
       print('Can\'t get ' + move[1] + '!')
-      
+
+  # drop items
+  if move[0] == 'drop':
+    if move[1] in inventory:
+      inventory -= [move[1]]
+      print(move[1] + 'dropped!')
+      rooms[currentRoom]['item'].append(move[1])
+    else:
+      print('You do not have this item!')  
+
   if move[0] == 'use' :
   # CHAD NOTE: a lot of this code was redundant (already covered elsewhere in the script) so I removed it.
   
@@ -199,7 +205,6 @@ while True:
           if move[0]== 'use':
             if 'sword' in inventory and move[1] == 'sword':
                win_chance= random.randint(1,2)
-                          
                if win_chance == 1:
                    print('You are killed by the warrior! GAME OVER!')
                    break
@@ -207,9 +212,6 @@ while True:
                  currentRoom= 'field'
                  print('You have defeated the warrior and escaped to the field!')
 
-     
-
-  # CHAD NOTE: all this zombie logic MUST follow the warrior logic
   if 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
       if 'fire' in inventory and move.lower() == 'use fire':
           print("There is a zombie here! You toss fire in its face and watch the ghoul burn!")
@@ -227,24 +229,19 @@ while True:
   if currentRoom == 'field' and 'target' not in rooms[currentRoom]:
     print('Congrats! You have successfully escaped. YOU WIN!')
     break
-
-  # this contradicts the code above, so I commented it out     
-  #elif 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
-    #action3= input('D')
-    #print('The zombie has bited you... GAME OVER!')
-    #break
   
-                       # typo fixed
-  
-  elif move[0] == 'help':
+  elif move[0] in ['h', 'help', 'inv', 'inventory']:
       showInstructions()
-      
-    
-  
+  elif move[0] in ['r', 'restart']:
+      restart_query = input("Are you sure you want to restart the script? (Y/N)")
+      if restart_query.upper() in ['Y', 'YES']:
+        restart()
+      else: 
+          pass
   elif move[0] in ['q', 'quit']:
-      print("Are you sure you want to quit? Yes/No")
+      print("Are you sure you want to quit? Y/N")
       quit_query = input('>')
-      if quit_query.lower() in ['y', 'yes']:
+      if quit_query.upper() in ['Y', 'YES']:
           print("Thanks for playing!")
           sys.exit()
       else:
