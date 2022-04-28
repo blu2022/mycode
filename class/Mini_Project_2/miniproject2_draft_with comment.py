@@ -6,14 +6,9 @@ import time
 from pyfiglet import figlet_format
 import threading
 
-# search from here http://www.figlet.org/examples.html 
-def bannershow():
-    print("\n")
-    print(figlet_format("Adventure", font = "ogre"))
 
-bannershow()
 
-def print_slow(text, delay = 0.03):
+def print_slow(text, delay = 0.02):
     for c in text:
         sys.stdout.write(c)
         sys.stdout.flush()
@@ -24,23 +19,37 @@ def print1(text1, delay = 0):
     print("\n" + text1)
     time.sleep(delay)
 
+# search from here http://www.figlet.org/examples.html 
+def bannershow():
+    print("\n")
+    print1(figlet_format("Adventure", font = "ogre"), 0.05)
+
 def restart():
     sys.stdout.flush()
-    os.execl(sys.executable, 'python', __file__, *sys.argv[1:])
+    os.execl(sys.executable, 'python3', __file__, *sys.argv[1:])
+
+def decision():
+    print("You took too long! The zombie ate your brains!")
+    os._exit(os.EX_OK)
+    # os._exit will FORCE the program to end!
+
+    S = threading.Timer(10.0, decision)
+    # What does the above line mean?
+    # threading.Timer is a class object- how it works depends on the two arguments provided:
+    # arg 1 (10.0) is the number of seconds until a function is called0
+    # arg 2 (decision) is the function that will be called in 10.0 seconds
+
+    S.start()
+    # this line STARTS the separate thread!
+    # the thread "S" will run simultaneously as more actions
+    # below are executed
+    #print("PROGRAM TERMINATION\n")  
+    #S.cancel()
+
+    print("You're trapped in a room with a zombie!!! You have 3 seconds to figure out what to do before the zombie eats your brains!")
 
 
-def countdown(t):
-    
-    while t:
-        mins, secs = divmod(t, 60)
-        timer = '{:02d}:{:02d}'.format(mins, secs)
-        print(timer, end="\r")
-        time.sleep(1)
-        t -= 1
-    t= 10
-    countdown(int(t))  
-    print('You are eaten by zombie! GAME OVER!')
-  
+bannershow()
 
 delay = 0
 
@@ -53,7 +62,8 @@ You can move north/south/west/east to find a way to escape.
 hint: Water kills fire.
       fire kills zombie.
       sword kills zobbie and warrior.
-      A good potion will never be green.
+      Usually, a poisonal potion is green.
+      Small size knife cannot kill human or zombie.
 Commands:
   go [direction]  ---- go to a direction
   get [item]      ---- obtain an item
@@ -66,13 +76,13 @@ Commands:
 
 def showStatus():
   print('---------------------------')
-  print_slow('You are in the ' + currentRoom)
-  print_slow('Inventory : ' + str(inventory))
+  print1('You are in the ' + currentRoom)
+  print1('Inventory : ' + str(inventory))
   if "item" in rooms[currentRoom]:
-    print_slow(f"You see {rooms[currentRoom]['item']}")
+    print1(f"You see {rooms[currentRoom]['item']}")
   print("---------------------------")
   if "teleport" in rooms[currentRoom]: 
-    print_slow("\nA teleport station has been found!")
+    print1("\nA teleport station has been found!")
     
 inventory = []
 
@@ -88,34 +98,40 @@ rooms = {
             'north' : {
                   'south' : 'center',
                   'item' : ['fire', 'water', 'knife'],
-                  'desc' : 'You are in a cold environment. It\'s probably not gonna be a good idea to stay too long.'
+                  'desc' : 'You are in a cold environment. It\'s probably not gonna be a good idea to stay too long.\nThe knife is small like the size of an index finger'
                 },
             'south' : {
                   'north' : 'center',
                   'east' : 'field',
                   'teleport' : 'east',
                   'item' : ['red potion', 'green potion', 'knife'],
-                  'desc' : 'You see two potions on a table. One is red, and another one is green.\nThe red one smells like lavender while the green one smells a little stink.'
+                  'desc' : 'You see two potions on a table. One is red, and another one is green.\nThe red one smells like lavender while the green one smells a little stink.\nThe knife is small like the size of an index finger'
                },
             'west' : {
                   'east' : 'center',
                   'item' : ['knife', 'sword', ],
                   'teleport' : 'basement',
-                  'desc' : 'There is a knife right next to the teleport station.\nIt looks like someone dropped it before.\nOn the other side, you find a sword, which looks a little blunt but still sharp enough to cut meat'
+                  'desc' : 'There is a knife right next to the teleport station.\nIt looks like someone dropped it before.\nOn the other side, you find a sword, which looks a little blunt but still sharp enough to cut meat.\nThe knife right next to the sword is small like the size of an index finger.'
                 }, 
             'east' : {
                   'west' : 'center',
                   'east' : 'field',
                   'teleport' : 'basement',
                   'target' : 'warrior',
+                  'item':'',
                   'desc' : 'A warrior appears in front of you.\nHe\'s trying to stop you from passing.'
                 },
             'field' : {
                   'west' : 'east',
                   'target' : 'zombie',
+                  'item':[],
                   'desc': 'You are on the field now. A zombie is running to you and trying to bite you!'
-            }
-         }
+                },
+            'basement' : {  
+                  'item': [],           
+                  'desc': 'You are now locked in a basement. You need to find a way out!'
+                }
+          }
          
 currentRoom = 'center'
 
@@ -131,7 +147,6 @@ while True:
     move = move.lower().split(" ", 1)
 
   os.system('clear') 
-  
   if move[0] == 'go':
     # CHAD CHANGE: moved code for specific rooms to later in the code, keep code cleanly modularized
     # CHAD CHANGE: redundant to use move[1].lower(), already did that on line 90
@@ -140,11 +155,10 @@ while True:
           print('invalid command! Please type again!')
         elif move[1] in rooms[currentRoom]:
           currentRoom = rooms[currentRoom][move[1]]
-          if 'desc' in rooms[currentRoom]: 
-                print1(rooms[currentRoom]['desc'], 1)
         else:
           print('You can\'t go that way!')        
-
+  if 'desc' in rooms[currentRoom]: 
+      print1(rooms[currentRoom]['desc'], 1)
   # add items to inventory
   if move[0] == 'get' :
     if move[1] in inventory:
@@ -161,57 +175,72 @@ while True:
   # drop items
   if move[0] == 'drop':
     if move[1] in inventory:
-      inventory -= [move[1]]
-      print(move[1] + 'dropped!')
+      inventory.remove(move[1])
+      print(move[1] + ' dropped!')
       rooms[currentRoom]['item'].append(move[1])
     else:
       print('You do not have this item!')  
+ 
+  # use items
 
-  if move[0] == 'use' :
-  # CHAD NOTE: a lot of this code was redundant (already covered elsewhere in the script) so I removed it.
-  
-        if move[1] == 'teleport':
-            currentRoom = 'basement'
+    # The item is not in inventory
+  if move[0] == 'use' and move[1] not in inventory: 
+      if move[1] == 'teleport' and currentRoom in ['west', 'east']:
+          currentRoom = 'basement'
+          print_slow('You have been teleported to a basement!\n') 
+          if 'desc' in rooms[currentRoom]: 
+            print1(rooms[currentRoom]['desc'], 1)  
+      else:      
+        print(f"{move[1]} is not in your inventory!")
 
-        elif move[1] == 'green potion':
+  if move[0] == 'use' and move[1] in inventory:
+    # inside basement
+    if currentRoom == 'basement':
+        if 'knife' not in inventory:
+            print('15 days later, a dead body was found in a basement...GAME OVER!')
+            break
+        else:
+            print("You have broken the lock with the knife! You are back to the center.")
+            currentRoom = 'center'
+        
+    #except for being in basement, you should not be able to use items while there is no target.             
+    elif 'target' not in rooms[currentRoom]:
+        print(f'You cannot use {move[1]} when there is no target.')
+    else: 
+        print(f'You choose to use {move[1]}.')
+        if move[1] not in ['knife', 'sword']:
+          inventory.remove(move[1])
+          if move[1] == 'green potion':
             print('Your are tallow-faced, pressing your neck with both hands, and fell so suffocated.\nYou are dead...GAME OVER!')
             break
             
-        elif move[1] == 'red potion':
-            print('You suddenly feel energized...\nCongratulation! You have gained the power of mind control!')
-                
-        else:
-            print(f"{move[1]} is not in your inventory!")
-     
-  if currentRoom == 'basement':
-        if 'knife' in inventory:
-          print("You are in the basement but the door is locked.\nBut it looks like you are able to unlock the door.")
-          currentRoom == 'center'
-        else:
-          print('15 days later, a dead body was found in a basement...GAME OVER!')
-          break
+
         
   if 'fire' in inventory and 'water' in inventory:
         print('The fire has disappeared.')
         inventory.remove('fire')
-    
+  #with warrior in the east
   if 'target' in rooms[currentRoom] and 'warrior' in rooms[currentRoom]['target']:
-          if 'red potion' not in inventory or 'sword' not in inventory:
-            currentRoom= 'center'
-            print('The warrior kicked you back to the center room!')
-          if move[0] == 'go':
+          #if 'red potion' not in inventory and 'sword' not in inventory:
+            #currentRoom= 'center'
+            #print('The warrior kicked you back to the center!')
+        if move[0] == 'go':
             if move[1] == 'east':
                 print('Warrior block the only road to the east.\nYou must either get permission from him or defeat him.')
-          if move[0]== 'use':
+        if move[0]== 'use':
             if 'sword' in inventory and move[1] == 'sword':
                win_chance= random.randint(1,2)
                if win_chance == 1:
                    print('You are killed by the warrior! GAME OVER!')
                    break
                else:
-                 currentRoom= 'field'
-                 print('You have defeated the warrior and escaped to the field!')
+                 del rooms[currentRoom]['warrior']
+                 print('You have defeated the warrior. You found an exit to the field on the east side!')
 
+            if 'red potion' in inventory and move[1] == 'red portion':
+                del rooms[currentRoom]['warrior']
+                print('You suddenly feel extremly energized...\nCongratulation! You have gained the power of mind control!\nThe warrior is told to walked away.')
+  #with zombie in the field
   if 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
       if 'fire' in inventory and move.lower() == 'use fire':
           print("There is a zombie here! You toss fire in its face and watch the ghoul burn!")
@@ -220,12 +249,12 @@ while True:
           print("There is a zombie here! You lop off its head with your sword!")
           del rooms[currentRoom]['target']
       elif "red potion" in inventory and move.lower() == 'use red potion':
-          print("You have gain the power of mind control! However, the zoobie does not have mind.")
-          
+          print("You have gain the power of mind control! However, the zoobie does not have mind.\nYou are eaten by zombie! GAME OVER!")
+          break
       elif 'fire' not in inventory and 'sword' not in inventory and 'red potion' not in inventory:
           print('You are eaten by zombie! GAME OVER!')
           break
-    
+  #how to win
   if currentRoom == 'field' and 'target' not in rooms[currentRoom]:
     print('Congrats! You have successfully escaped. YOU WIN!')
     break

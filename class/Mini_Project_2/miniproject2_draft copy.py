@@ -160,9 +160,9 @@ while True:
       #tell them they can't get it
       print('Can\'t get ' + move[1] + '!')
       
-  #if they type 'use' 
+  #if 'use' 
   if move[0] == 'use' :
-    if move[1] == 'teleport' and (rooms[currentRoom] == 'west' or 'east'):
+    if move[1] == 'teleport' and (rooms[currentRoom] in ['west' or 'east']):
       currentRoom = 'basement'
     elif move[1] in inventory:
       if 'knife' in inventory:
