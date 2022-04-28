@@ -221,9 +221,9 @@ while True:
         inventory.remove('fire')
   #with warrior in the east
   if 'target' in rooms[currentRoom] and 'warrior' in rooms[currentRoom]['target']:
-          #if 'red potion' not in inventory and 'sword' not in inventory:
-            #currentRoom= 'center'
-            #print('The warrior kicked you back to the center!')
+        if 'red potion' not in inventory and 'sword' not in inventory:
+            currentRoom= 'center'
+            print('The warrior kicked you back to the center!')
         if move[0] == 'go':
             if move[1] == 'east':
                 print('Warrior block the only road to the east.\nYou must either get permission from him or defeat him.')
@@ -242,6 +242,10 @@ while True:
                 print('You suddenly feel extremly energized...\nCongratulation! You have gained the power of mind control!\nThe warrior is told to walked away.')
   #with zombie in the field
   if 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
+    #while move == '':
+      #S = threading.Timer(10.0, decision)
+      #S.start()
+      
       if 'fire' in inventory and move.lower() == 'use fire':
           print("There is a zombie here! You toss fire in its face and watch the ghoul burn!")
           del rooms[currentRoom]['target']

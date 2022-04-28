@@ -16,7 +16,7 @@ def main():
 
     # J
     for x in pokeapi['moves']:
-        print(' >', x['move']['name'])
+        print(' >', x['moves']['name'])
 
     # ETHAN
     print(f"{pokeapi['name']} has appeared in {len(pokeapi['game_indices'])} games!")
