@@ -148,8 +148,6 @@ while True:
   os.system('clear') 
   if move[0] == 'go':
     # CHAD CHANGE: moved code for specific rooms to later in the code, keep code cleanly modularized
-    # CHAD CHANGE: redundant to use move[1].lower(), already did that on line 90
-      
         if move[1] == 'item' or move[1] == 'desp' or move[1] == 'target' or move [1] == 'teleport': 
           print('invalid command! Please type again!') 
         #elif currentRoom == 'east' and move[1] == 'east': 
@@ -158,6 +156,12 @@ while True:
               print_slow('The warrior does not allow you to pass!')
             else:
               pass
+        elif 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
+            if currentRoom == 'field':
+              print_slow('find a way to kill the zombie!')
+        #elif currentRoom == 'field' and 'target' in rooms[currentRoom] and 'zombie' not in rooms[currentRoom]['target']: 
+                #print_slow('Congrats! You have successfully escaped. YOU WIN!')
+                #break
         elif move[1] in rooms[currentRoom]:
           currentRoom = rooms[currentRoom][move[1]]
         else:
@@ -244,7 +248,7 @@ while True:
               del rooms[currentRoom]['target']
 
           if 'sword' in inventory and move[1] == 'sword':
-               win_chance= random.randint(1,2)
+               win_chance= random.randint(1,3)
                if win_chance == 1:
                    print('You are killed by the warrior! GAME OVER!')
                    break
@@ -256,29 +260,30 @@ while True:
   #if currentRoom == 'east' and 'warrior' not in rooms[currentRoom]['target']:
 
   #with zombie in the field
-  if 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
+  #how to win
+  #if 'target' in rooms[currentRoom] and 'zombie' not in rooms[currentRoom]['target']:
+      #if currentRoom == 'field':
+        #print('Congrats! You have successfully escaped. YOU WIN!')
+        #break
+
+  elif 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
     #while move == '':
       #S = threading.Timer(10.0, decision)
       #S.start()
       if move[0] == 'use':
         if 'fire' in inventory and move[1] == 'fire':
-          print("There is a zombie here! You toss fire in its face and watch the ghoul burn!")
-          time.sleep(2)
-          del rooms[currentRoom]['target']
+          print("There is a zombie here! You toss fire in its face and watch the ghoul burn!\nYOU WIN!")
+          break
         if "sword" in inventory and move[1] == 'sword':
-          print("There is a zombie here! You lop off its head with your sword!")
-          time.sleep(2)
-          del rooms[currentRoom]['target']
+          print("There is a zombie here! You lop off its head with your sword!YOU WING!")
+          break
         if "red potion" in inventory and move[1] == 'red potion':
           print("You have gain the power of mind control! However, the zoobie does not have mind.\nYou are eaten by zombie! GAME OVER!")
           break
         if 'fire' not in inventory and 'sword' not in inventory and 'red potion' not in inventory:
           print('You are eaten by zombie! GAME OVER!')
           break
-  #how to win
-  if currentRoom == 'field' and 'target' in rooms[currentRoom] and 'zoobie' not in rooms[currentRoom]['target']:
-    print('Congrats! You have successfully escaped. YOU WIN!')
-    break
+
   
   elif move[0] in ['h', 'help', 'inv', 'inventory']:
       showInstructions()
