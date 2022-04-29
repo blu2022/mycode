@@ -152,6 +152,12 @@ while True:
       
         if move[1] == 'item' or move[1] == 'desp' or move[1] == 'target' or move [1] == 'teleport': 
           print('invalid command! Please type again!') 
+        #elif currentRoom == 'east' and move[1] == 'east': 
+        elif 'target' in rooms[currentRoom] and 'warrior' in rooms[currentRoom]['target']:
+            if currentRoom == 'east' and move[1] == 'east':
+              print_slow('The warrior does not allow you to pass!')
+            else:
+              pass
         elif move[1] in rooms[currentRoom]:
           currentRoom = rooms[currentRoom][move[1]]
         else:
@@ -202,12 +208,14 @@ while True:
     #except for being in basement, you should not be able to use items while there is no target.             
       if 'target' not in rooms[currentRoom]: #and "potion" not in move[1]:
           print(f'You cannot use {move[1]} when there is no target.')
-      elif move[1] not in ['knife', 'sword']:
-        inventory.remove(move[1])
-        if move[1] == 'green potion':
+      #if move[1] not in ['knife', 'sword']:
+        #inventory.remove(move[1])
+      if move[1] == 'green potion':
+          inventory.remove(move[1])
           print('Your are tallow-faced, pressing your neck with both hands, and fell so suffocated.\nYou are dead...GAME OVER!')
           break
 
+      
   if currentRoom == 'basement':
       if 'knife' not in inventory and "knife" not in rooms[currentRoom]["item"]:
           print('15 days later, a dead body was found in a basement...GAME OVER!')
@@ -222,18 +230,20 @@ while True:
         print('The fire has disappeared.')
         inventory.remove('fire')
   #with warrior in the east
-  if currentRoom == 'east' and 'warrior' in rooms[currentRoom]['target']:
+  if currentRoom == 'east' and 'target' in rooms[currentRoom] and 'warrior' in rooms[currentRoom]['target']:
         #print('Warrior block the only road to the east.\nYou must either get permission from him or defeat him.')
-        if move[0] == 'go':
-           if move[1] == 'east':
-              currentRoom= 'east'
-              print('The warrior won\'t allow you to pass!')           
+        #if move[0] == 'go':
+           #if move[1] == 'east':
+              #currentRoom= 'east'
+              #print('The warrior won\'t allow you to pass!')           
         if move[0] == 'use':
           if 'red potion' in inventory and move[1] == 'red potion':
               print('You suddenly feel extremly energized...\nCongratulation! You have gained the power of mind control!\nThe warrior is told to walked away.')
-              time.sleep(2)
-              rooms[currentRoom]['target'].remove('warrior')
-          if'sword' in inventory and move[1] == 'sword':
+              time.sleep(5)
+              inventory.remove(move[1])
+              del rooms[currentRoom]['target']
+
+          if 'sword' in inventory and move[1] == 'sword':
                win_chance= random.randint(1,2)
                if win_chance == 1:
                    print('You are killed by the warrior! GAME OVER!')
@@ -266,7 +276,7 @@ while True:
           print('You are eaten by zombie! GAME OVER!')
           break
   #how to win
-  if currentRoom == 'field' and 'zoobie' not in rooms[currentRoom]['target']:
+  if currentRoom == 'field' and 'target' in rooms[currentRoom] and 'zoobie' not in rooms[currentRoom]['target']:
     print('Congrats! You have successfully escaped. YOU WIN!')
     break
   
