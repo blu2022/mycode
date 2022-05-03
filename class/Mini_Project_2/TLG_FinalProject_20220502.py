@@ -28,27 +28,45 @@ def restart():
     sys.stdout.flush()
     os.execl(sys.executable, 'python3', __file__, *sys.argv[1:])
 
+def cutezombie():
+    print('''
+      
+                                .....            
+                               C C  /            
+                              /<   /             
+               ___ __________/_#__=o             
+              /(- /(\_\________   \              
+              \ ) \ )_      \o     \             
+              /|\ /|\       |'     |             
+                            |     _|             
+                            /o   __\             
+                           / '     |             
+                          / /      |             
+                         /_/\______|             
+                        (   _(    <              
+                         \    \    \             
+                          \    \    |            
+                           \____\____\           
+                           ____\_\__\_\          
+                         /`   /`     o\          
+                         |___ |_______|.. 
+      
+      '''
+)
+  
+  
 def decision():
-    print("You took too long! The zombie ate your brains!")
-    os._exit(os.EX_OK)
+  
+    cutezombie()
+    print("\nYou took too long! The zombie ate your brains!")
+    os._exit(os.X_OK)
     # os._exit will FORCE the program to end!
+    #S = threading.Timer(8.0, decision)
 
-    S = threading.Timer(10.0, decision)
-    # What does the above line mean?
-    # threading.Timer is a class object- how it works depends on the two arguments provided:
-    # arg 1 (10.0) is the number of seconds until a function is called0
-    # arg 2 (decision) is the function that will be called in 10.0 seconds
-
-    S.start()
-    # this line STARTS the separate thread!
-    # the thread "S" will run simultaneously as more actions
-    # below are executed
-    #print("PROGRAM TERMINATION\n")  
-    #S.cancel()
-
-    print("You're trapped in a room with a zombie!!! You have 3 seconds to figure out what to do before the zombie eats your brains!")
-
-
+    #S.start()
+    #print("You're trapped in a room with a zombie!!! You have 3 seconds to figure out what to do before the zombie eats your brains!")
+  
+  
 bannershow()
 
 delay = 0
@@ -92,7 +110,7 @@ rooms = {
                   'south' : 'south',
                   'east' : 'east',
                   'west' : 'west',
-                  'item' : ['water', 'knife', 'sword', 'red potion', 'fire'],
+                  'item' : ['water', 'knife', 'red potion', 'fire', 'gold bar', 'cigarette'],
                   'desc' : 'You are in the center room which is the starting point.\nThere are four doors on each side: North, South, West, East.' 
                 },
             'north' : {
@@ -123,7 +141,7 @@ rooms = {
                   'west' : 'east',
                   'target' : 'zombie',
                   'item':[],
-                  'desc': 'You are on the field now. A zombie is running to you and trying to bite you!'
+                  'desc': 'You are on the field now. \nA zombie is running to you and trying to bite you!\nYou don\'t have too much time to react!'
                 },
             'basement' : {  
                   'item': [],           
@@ -145,7 +163,7 @@ while True:
     move = input('Please type your command\n>')
     move = move.lower().split(" ", 1)
 
-  os.system('clear') 
+  
   if move[0] == 'go':
     # CHAD CHANGE: moved code for specific rooms to later in the code, keep code cleanly modularized
         if move[1] == 'item' or move[1] == 'desp' or move[1] == 'target' or move [1] == 'teleport': 
@@ -268,21 +286,28 @@ while True:
 
   elif 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
     #while move == '':
-      #S = threading.Timer(10.0, decision)
-      #S.start()
+      S = threading.Timer(8.0, decision)
+      S.start()
       if move[0] == 'use':
         if 'fire' in inventory and move[1] == 'fire':
+          S.cancel()
           print("There is a zombie here! You toss fire in its face and watch the ghoul burn!\nYOU WIN!")
+          os._exit(os.X_OK)
           break
         if "sword" in inventory and move[1] == 'sword':
-          print("There is a zombie here! You lop off its head with your sword!YOU WING!")
-          break
+          S.cancel()
+          print("You lop off its head with your sword!\nYOU WIN!")
+          os._exit(os.X_OK)
+          #break
         if "red potion" in inventory and move[1] == 'red potion':
           print("You have gain the power of mind control! However, the zoobie does not have mind.\nYou are eaten by zombie! GAME OVER!")
-          break
-        if 'fire' not in inventory and 'sword' not in inventory and 'red potion' not in inventory:
-          print('You are eaten by zombie! GAME OVER!')
-          break
+          os._exit(os.X_OK)
+          #break
+      if 'fire' not in inventory and 'sword' not in inventory and 'red potion' not in inventory:
+          cutezombie()
+          print('\nYou are eaten by zombie! GAME OVER!')
+          os._exit(os.X_OK)
+          #break
 
   
   elif move[0] in ['h', 'help', 'inv', 'inventory']:

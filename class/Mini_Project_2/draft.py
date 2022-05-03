@@ -1,12 +1,30 @@
 #!/usr/bin/python3
 
-from pyfiglet import figlet_format
-
-def bannershow():
-
-    print(figlet_format("Adventure", font = "ogre"))
-
-bannershow()
+def cutezombie()
+print('''
+      
+                                .....            
+                               C C  /            
+                              /<   /             
+               ___ __________/_#__=o             
+              /(- /(\_\________   \              
+              \ ) \ )_      \o     \             
+              /|\ /|\       |'     |             
+                            |     _|             
+                            /o   __\             
+                           / '     |             
+                          / /      |             
+                         /_/\______|             
+                        (   _(    <              
+                         \    \    \             
+                          \    \    |            
+                           \____\____\           
+                           ____\_\__\_\          
+                         /`   /`     o\          
+                         |___ |_______|.. 
+      
+      '''
+)
 
 
 
