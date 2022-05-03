@@ -139,7 +139,7 @@ rooms = {
             'basement' : {  
                   'item': [],           
                   'target': [],
-                  'desc': 'You are now locked in a basement. You need to find a way out!'
+                  'desc': 'You cannot see anything in a dark basement.'
                 }
           }
          
