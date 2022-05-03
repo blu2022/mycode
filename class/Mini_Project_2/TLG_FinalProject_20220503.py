@@ -54,18 +54,11 @@ def cutezombie():
       '''
 )
   
-  
 def decision():
   
     cutezombie()
     print("\nYou took too long! The zombie ate your brains!")
     os._exit(os.X_OK)
-    # os._exit will FORCE the program to end!
-    #S = threading.Timer(8.0, decision)
-
-    #S.start()
-    #print("You're trapped in a room with a zombie!!! You have 3 seconds to figure out what to do before the zombie eats your brains!")
-  
   
 bannershow()
 
@@ -110,7 +103,7 @@ rooms = {
                   'south' : 'south',
                   'east' : 'east',
                   'west' : 'west',
-                  'item' : ['water', 'knife', 'red potion', 'fire', 'gold bar', 'cigarette'],
+                  'item' : ['water', 'knife', 'gold bar', 'cigarette'],
                   'desc' : 'You are in the center room which is the starting point.\nThere are four doors on each side: North, South, West, East.' 
                 },
             'north' : {
@@ -135,7 +128,7 @@ rooms = {
                   'teleport' : 'basement',
                   'target' : 'warrior',
                   'item':'',
-                  'desc' : 'A warrior appears in front of you.\nhe blocks the only road to the east.\nYou must either convince him or defeat him to pass.'
+                  'desc' : 'A warrior appears in front of you.\nHe blocks the only road to the east.\nYou must either convince him or defeat him to pass.'
                 },
             'field' : {
                   'west' : 'east',
@@ -165,21 +158,18 @@ while True:
 
   
   if move[0] == 'go':
-    # CHAD CHANGE: moved code for specific rooms to later in the code, keep code cleanly modularized
         if move[1] == 'item' or move[1] == 'desp' or move[1] == 'target' or move [1] == 'teleport': 
           print('invalid command! Please type again!') 
-        #elif currentRoom == 'east' and move[1] == 'east': 
         elif 'target' in rooms[currentRoom] and 'warrior' in rooms[currentRoom]['target']:
             if currentRoom == 'east' and move[1] == 'east':
-              print_slow('The warrior does not allow you to pass!')
+                print_slow('The warrior does not allow you to pass!')
+            elif currentRoom == 'east' and move[1] == 'west':
+                currentRoom = rooms[currentRoom][move[1]]
             else:
               pass
         elif 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
             if currentRoom == 'field':
               print_slow('find a way to kill the zombie!')
-        #elif currentRoom == 'field' and 'target' in rooms[currentRoom] and 'zombie' not in rooms[currentRoom]['target']: 
-                #print_slow('Congrats! You have successfully escaped. YOU WIN!')
-                #break
         elif move[1] in rooms[currentRoom]:
           currentRoom = rooms[currentRoom][move[1]]
         else:
@@ -222,16 +212,11 @@ while True:
         print(f"{move[1]} is not in your inventory!")
 
   if move[0] == 'use' and move[1] in inventory:
-      print(f'You choose to use {move[1]}.')
-      #if currentRoom == "basement" and move[1] == "knife":
-          #print("You escape the basement.")
-          #currentRoom= "center"
-           
-    #except for being in basement, you should not be able to use items while there is no target.             
+      print(f'You choose to use {move[1]}.')        
+            
       if 'target' not in rooms[currentRoom]: #and "potion" not in move[1]:
           print(f'You cannot use {move[1]} when there is no target.')
-      #if move[1] not in ['knife', 'sword']:
-        #inventory.remove(move[1])
+
       if move[1] == 'green potion':
           inventory.remove(move[1])
           print('Your are tallow-faced, pressing your neck with both hands, and fell so suffocated.\nYou are dead...GAME OVER!')
@@ -251,13 +236,9 @@ while True:
   if 'fire' in inventory and 'water' in inventory:
         print('The fire has disappeared.')
         inventory.remove('fire')
-  #with warrior in the east
+        
   if currentRoom == 'east' and 'target' in rooms[currentRoom] and 'warrior' in rooms[currentRoom]['target']:
-        #print('Warrior block the only road to the east.\nYou must either get permission from him or defeat him.')
-        #if move[0] == 'go':
-           #if move[1] == 'east':
-              #currentRoom= 'east'
-              #print('The warrior won\'t allow you to pass!')           
+          
         if move[0] == 'use':
           if 'red potion' in inventory and move[1] == 'red potion':
               print('You suddenly feel extremly energized...\nCongratulation! You have gained the power of mind control!\nThe warrior is told to walked away.')
@@ -274,18 +255,8 @@ while True:
                  del rooms[currentRoom]['target']
                  print('You have defeated the warrior. You found an exit to the field on the east side!')
 
-          
-  #if currentRoom == 'east' and 'warrior' not in rooms[currentRoom]['target']:
-
-  #with zombie in the field
-  #how to win
-  #if 'target' in rooms[currentRoom] and 'zombie' not in rooms[currentRoom]['target']:
-      #if currentRoom == 'field':
-        #print('Congrats! You have successfully escaped. YOU WIN!')
-        #break
-
   elif 'target' in rooms[currentRoom] and 'zombie' in rooms[currentRoom]['target']:
-    #while move == '':
+
       S = threading.Timer(8.0, decision)
       S.start()
       if move[0] == 'use':
@@ -304,6 +275,7 @@ while True:
           os._exit(os.X_OK)
           #break
       if 'fire' not in inventory and 'sword' not in inventory and 'red potion' not in inventory:
+          
           cutezombie()
           print('\nYou are eaten by zombie! GAME OVER!')
           os._exit(os.X_OK)
