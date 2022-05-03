@@ -26,6 +26,7 @@ def bannershow():
 
 def restart():
     sys.stdout.flush()
+    #os.execv(sys.executable, ['python3'] + sys.argv)
     os.execl(sys.executable, 'python3', __file__, *sys.argv[1:])
 
 def cutezombie():
